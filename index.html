@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SanguineOath — OSRS Clan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0c0506;--bg2:#120809;--surface:rgba(255,255,255,0.025);--surface2:rgba(255,255,255,0.04);
+    --border:rgba(160,80,80,0.12);--border-hi:rgba(200,100,80,0.3);
+    --accent:#c45a4a;--accent-soft:#d4786a;--accent-glow:rgba(196,90,74,0.15);
+    --warm:#f5e6dc;--warm2:#e8cfc0;--warm3:#c4a898;
+    --text:#c8b8b0;--text-dim:#8a7e78;--text-faint:#5a5250;
+    --green:#6ec87a;--gold:#e8c44a;--silver:#b8b8c0;--bronze:#c8946a;
+    --font:'Inter',system-ui,-apple-system,sans-serif;--heading:'Cinzel',Georgia,serif;
+  }
+  body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
+  ::placeholder{color:var(--text-faint)}
+  ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(160,80,80,0.2);border-radius:3px}
+  *{scrollbar-width:thin;scrollbar-color:rgba(160,80,80,0.2) transparent}
+
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes softGlow{0%,100%{box-shadow:0 0 30px rgba(196,90,74,.08)}50%{box-shadow:0 0 50px rgba(196,90,74,.18)}}
+  @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+
+  /* ── Layout ── */
+  .wrap{max-width:920px;margin:0 auto;padding:0 24px}.center{text-align:center}
+
+  /* ── Header ── */
+  header{
+    position:relative;z-index:10;
+    background:linear-gradient(180deg,rgba(20,10,10,.97) 0%,rgba(12,5,6,.98) 100%);
+    border-bottom:1px solid rgba(160,80,80,.1);
+    padding:40px 0 28px;
+    overflow:hidden;
+  }
+  header::before{
+    content:'';position:absolute;inset:0;
+    background:radial-gradient(ellipse at 50% 20%,rgba(196,90,74,.06) 0%,transparent 60%);
+    pointer-events:none;
+  }
+
+  .emblem{
+    width:80px;height:80px;border-radius:50%;
+    background:radial-gradient(circle,rgba(30,14,14,.9),rgba(12,5,6,.95));
+    border:2px solid rgba(196,90,74,.25);
+    display:flex;align-items:center;justify-content:center;
+    animation:softGlow 5s ease-in-out infinite;
+    margin:0 auto 16px;
+    position:relative;
+  }
+  .emblem::after{
+    content:'';position:absolute;inset:-4px;border-radius:50%;
+    border:1px solid rgba(196,90,74,.08);
+  }
+
+  .clan-name{
+    font-family:var(--heading);font-weight:900;font-size:36px;letter-spacing:5px;
+    background:linear-gradient(180deg,var(--warm) 0%,var(--accent) 70%,#8a3a30 100%);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    line-height:1.15;margin-bottom:4px;
+  }
+  .clan-sub{color:var(--text-dim);font-size:13px;letter-spacing:2px;text-transform:uppercase;font-weight:400}
+
+  .header-actions{display:flex;gap:10px;justify-content:center;align-items:center;margin-top:18px;flex-wrap:wrap}
+
+  .discord-btn{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:10px 22px;
+    background:rgba(88,101,242,.1);border:1px solid rgba(88,101,242,.2);
+    border-radius:10px;color:#8b9bf7;font-size:13px;font-weight:600;
+    font-family:var(--font);text-decoration:none;letter-spacing:.3px;transition:all .25s;
+  }
+  .discord-btn:hover{background:rgba(88,101,242,.18);border-color:rgba(88,101,242,.35);color:#a0b0ff}
+
+  .live-badge{
+    display:inline-flex;align-items:center;gap:6px;
+    background:rgba(110,200,122,.08);border:1px solid rgba(110,200,122,.15);
+    border-radius:10px;padding:10px 18px;
+    color:var(--green);font-size:13px;font-weight:600;
+  }
+  .live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+
+  /* ── Nav ── */
+  .nav{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin-top:24px}
+  .nav button{
+    background:transparent;border:1px solid transparent;color:var(--text-dim);
+    padding:10px 18px;border-radius:10px;cursor:pointer;font-size:13px;
+    font-family:var(--font);font-weight:500;transition:all .2s;letter-spacing:.2px;
+  }
+  .nav button:hover{color:var(--warm3);background:rgba(255,255,255,.02)}
+  .nav button.active{
+    background:rgba(196,90,74,.1);border-color:rgba(196,90,74,.2);
+    color:var(--accent-soft);font-weight:600;
+  }
+
+  /* ── Main ── */
+  main{position:relative;z-index:10;max-width:920px;margin:0 auto;padding:36px 24px 80px}
+
+  /* ── Cards ── */
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+  .card-warm{background:linear-gradient(135deg,rgba(196,90,74,.04),rgba(255,255,255,.02));border:1px solid rgba(196,90,74,.1);border-radius:14px}
+
+  /* ── Section Titles ── */
+  .section-title{font-family:var(--heading);color:var(--warm2);font-weight:700;font-size:22px;letter-spacing:1px;text-align:center;margin-bottom:24px}
+  .sub-title{font-family:var(--heading);color:var(--accent-soft);font-weight:600;font-size:15px;letter-spacing:.5px;text-align:center;margin-bottom:16px}
+
+  /* ── Welcome / Hero ── */
+  .hero{text-align:center;margin-bottom:36px}
+  .hero-desc{color:var(--text);font-size:16px;line-height:1.8;max-width:560px;margin:0 auto 28px;font-weight:300}
+  .hero-desc strong{color:var(--warm2);font-weight:500}
+
+  .stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;max-width:480px;margin:0 auto}
+  .stat-box{
+    background:rgba(196,90,74,.03);border:1px solid rgba(196,90,74,.08);
+    border-radius:12px;padding:18px 14px;text-align:center;transition:border-color .2s;
+  }
+  .stat-box:hover{border-color:rgba(196,90,74,.18)}
+  .stat-label{font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:2px;font-weight:600;margin-bottom:8px}
+  .stat-value{color:var(--warm2);font-size:17px;font-weight:700;font-family:var(--heading);word-break:break-word}
+
+  /* ── Table Rows ── */
+  .col-head{display:grid;padding:12px 20px;font-size:11px;color:var(--text-faint);text-transform:uppercase;letter-spacing:1.5px;font-weight:600;border-bottom:1px solid rgba(160,80,80,.08)}
+  .row{display:grid;align-items:center;padding:12px 20px;border-bottom:1px solid rgba(255,255,255,.02);cursor:pointer;transition:background .2s}
+  .row:hover{background:rgba(196,90,74,.05)}
+  .row.top3{background:rgba(196,90,74,.03)}.row.top3:hover{background:rgba(196,90,74,.07)}
+  .player-name{display:flex;align-items:center;gap:12px}
+  .role-dot{display:inline-block;width:8px;height:8px;border-radius:50%}
+  .rank-num{font-family:var(--heading);font-weight:700;font-size:15px}
+  .gain{color:var(--green);font-weight:600}.tabnum{font-variant-numeric:tabular-nums}
+
+  /* ── Competition Cards ── */
+  .comp-card{
+    background:var(--surface);border:1px solid var(--border);border-radius:14px;
+    padding:20px 24px;cursor:pointer;transition:all .25s;
+  }
+  .comp-card:hover{border-color:var(--border-hi);background:var(--surface2);transform:translateY(-1px)}
+  .comp-card.live{border-color:rgba(110,200,122,.2)}
+  .comp-title{font-family:var(--heading);color:var(--warm2);font-size:15px;font-weight:600;line-height:1.4}
+  .comp-status{font-size:10px;font-weight:700;padding:4px 12px;border-radius:6px;letter-spacing:1px;flex-shrink:0}
+
+  /* ── Inputs ── */
+  .search-input{
+    padding:11px 18px;background:rgba(20,12,12,.7);
+    border:1px solid rgba(160,80,80,.12);border-radius:10px;
+    color:var(--warm2);font-size:14px;font-family:var(--font);
+    outline:none;transition:all .2s;
+  }
+  .search-input:focus{border-color:rgba(196,90,74,.3);box-shadow:0 0 0 3px rgba(196,90,74,.06)}
+  select{
+    padding:10px 16px;background:rgba(20,12,12,.7);
+    border:1px solid rgba(160,80,80,.12);border-radius:10px;
+    color:var(--text);font-size:13px;font-family:var(--font);
+    outline:none;cursor:pointer;appearance:auto;transition:border-color .2s;
+  }
+  select:focus{border-color:rgba(196,90,74,.3)}
+
+  /* ── Modal ── */
+  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);z-index:1000;display:flex;align-items:center;justify-content:center}
+  .modal{
+    background:linear-gradient(180deg,#160a0a,#0c0506);
+    border:1px solid rgba(196,90,74,.2);border-radius:16px;
+    padding:32px;max-width:700px;width:92%;max-height:82vh;overflow-y:auto;
+    box-shadow:0 30px 100px rgba(0,0,0,.6);
+  }
+  .modal-close{
+    background:rgba(196,90,74,.08);border:1px solid rgba(196,90,74,.15);
+    color:var(--text-dim);width:38px;height:38px;border-radius:10px;
+    cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s;
+  }
+  .modal-close:hover{background:rgba(196,90,74,.15);color:var(--warm2)}
+
+  /* ── Misc ── */
+  .spinner{width:32px;height:32px;border:3px solid rgba(196,90,74,.1);border-top:3px solid var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:60px auto}
+  .empty{color:var(--text-faint);text-align:center;padding:48px 20px;font-size:14px}
+  .load-status{text-align:center;color:var(--text-faint);font-size:13px;margin-top:12px}
+
+  footer{position:relative;z-index:10;border-top:1px solid rgba(160,80,80,.06);padding:28px 0;text-align:center}
+  footer p{color:rgba(160,80,80,.2);font-size:11px;font-family:var(--heading);letter-spacing:4px;font-weight:600}
+
+  .skill-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+  .skill-row{display:flex;justify-content:space-between;padding:9px 14px;background:rgba(255,255,255,.02);border-radius:8px;font-size:13px;transition:background .15s}
+  .skill-row:hover{background:rgba(255,255,255,.04)}
+  .skill-row span:first-child{color:var(--text-dim);text-transform:capitalize}
+  .skill-row span:last-child{color:var(--warm2);font-weight:600}
+
+  /* ── Home sections ── */
+  .home-section{margin-bottom:32px}
+  .home-section:last-child{margin-bottom:0}
+
+  @media(max-width:600px){
+    .clan-name{font-size:26px;letter-spacing:3px}
+    .wrap{padding:0 16px}main{padding:24px 16px 60px}
+    .col-head,.row{padding-left:14px;padding-right:14px}
+    .stat-grid{grid-template-columns:1fr 1fr}
+    header{padding:28px 0 20px}
+    .hero-desc{font-size:15px}
+  }
+  .hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<!-- Ambient background -->
+<div style="position:fixed;inset:0;pointer-events:none;z-index:0">
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% -5%,rgba(196,90,74,.04) 0%,transparent 50%)"></div>
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 80% 80%,rgba(88,101,242,.015) 0%,transparent 40%)"></div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="wrap center">
+    <div class="emblem">
+      <svg width="36" height="42" viewBox="0 0 40 48">
+        <path d="M20 2L22 18L38 20L22 22L20 38L18 22L2 20L18 18Z" fill="#c45a4a" opacity=".7"/>
+        <path d="M20 0L20 48" stroke="#c45a4a" stroke-width="1" opacity=".3"/>
+        <path d="M10 8Q20 3 30 8L30 13Q20 8 10 13Z" fill="#c45a4a" opacity=".3"/>
+        <circle cx="20" cy="20" r="3" fill="#d4786a" opacity=".6"/>
+      </svg>
+    </div>
+    <h1 class="clan-name">SANGUINEOATH</h1>
+    <p class="clan-sub" id="clan-sub">Old School RuneScape Clan</p>
+
+    <div class="header-actions">
+      <a href="https://discord.gg/gr53jcV52y" target="_blank" rel="noopener" class="discord-btn">
+        <svg width="20" height="15" viewBox="0 0 71 55" fill="none"><path d="M60.1 4.9A58.5 58.5 0 0045.4.2a.2.2 0 00-.2.1 40.8 40.8 0 00-1.8 3.7 54 54 0 00-16.2 0A37.4 37.4 0 0025.4.3a.2.2 0 00-.2-.1A58.4 58.4 0 0010.5 4.9a.2.2 0 00-.1.1C1.5 18.7-.9 32.2.3 45.5v.1a58.8 58.8 0 0017.7 9a.2.2 0 00.3-.1 42 42 0 003.6-5.9.2.2 0 00-.1-.3 38.8 38.8 0 01-5.5-2.6.2.2 0 01 0-.4l1.1-.9a.2.2 0 01.2 0 42 42 0 0035.6 0 .2.2 0 01.2 0l1.1.9a.2.2 0 010 .4 36.4 36.4 0 01-5.5 2.6.2.2 0 00-.1.3 47.2 47.2 0 003.6 5.9.2.2 0 00.3.1A58.6 58.6 0 0070.4 45.6v-.1c1.4-15-2.3-28.4-9.8-40.1a.2.2 0 00-.1-.1zM23.7 37.3c-3.5 0-6.3-3.2-6.3-7.1s2.8-7.1 6.3-7.1 6.4 3.2 6.3 7.1c0 3.9-2.8 7.1-6.3 7.1zm23.2 0c-3.5 0-6.3-3.2-6.3-7.1s2.8-7.1 6.3-7.1 6.4 3.2 6.3 7.1c0 3.9-2.7 7.1-6.3 7.1z" fill="currentColor"/></svg>
+        Join our Discord
+      </a>
+      <div id="live-badge" class="hidden"></div>
+    </div>
+
+    <div class="nav" id="nav"></div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main><div id="content"><div class="spinner"></div><p class="load-status" id="load-status">Connecting to Wise Old Man...</p></div></main>
+
+<!-- FOOTER -->
+<footer><p>SANGUINEOATH</p></footer>
+
+<!-- MODAL -->
+<div id="modal-root" class="hidden"></div>
+
+<script>
+const GID=22998,API="https://api.wiseoldman.net/v2";
+const SKILLS=["overall","attack","defence","strength","hitpoints","ranged","prayer","magic","cooking","woodcutting","fletching","fishing","firemaking","crafting","smithing","mining","herblore","agility","thieving","slayer","farming","runecrafting","hunter","construction"];
+const BOSSES=["abyssal_sire","alchemical_hydra","artio","barrows_chests","bryophyta","callisto","calvarion","cerberus","chambers_of_xeric","chambers_of_xeric_challenge_mode","chaos_elemental","chaos_fanatic","commander_zilyana","corporeal_beast","crazy_archaeologist","dagannoth_prime","dagannoth_rex","dagannoth_supreme","deranged_archaeologist","duke_sucellus","general_graardor","giant_mole","grotesque_guardians","hespori","kalphite_queen","king_black_dragon","kraken","kreearra","kril_tsutsaroth","lunar_chests","mimic","nex","nightmare","phosanis_nightmare","obor","phantom_muspah","sarachnis","scorpia","scurrius","skotizo","sol_heredit","spindel","tempoross","the_gauntlet","the_corrupted_gauntlet","the_leviathan","the_whisperer","theatre_of_blood","theatre_of_blood_hard_mode","thermonuclear_smoke_devil","tombs_of_amascut","tombs_of_amascut_expert","tzkal_zuk","tztok_jad","vardorvis","venenatis","vetion","vorkath","wintertodt","zalcano","zulrah"];
+const RO={owner:0,deputy_owner:1,administrator:2,moderator:3,guardian:4,sergeant:5,corporal:6,recruit:7,member:8};
+const RC={owner:"#e05a4a",deputy_owner:"#d4786a",administrator:"#c45a4a",moderator:"#b85a50",guardian:"#a06058",sergeant:"#8a6058",corporal:"#7a6860",recruit:"#888",member:"#a09890"};
+
+let S={tab:"home",group:null,members:[],comps:[],achv:[],search:""};
+const delay=ms=>new Promise(r=>setTimeout(r,ms));
+const cache={};
+
+async function wom(path,retries=3){
+  for(let a=0;a<retries;a++){
+    try{
+      console.log(`[WOM] ${a>0?"Retry "+a+" ":""}${path}`);
+      const r=await fetch(API+path);
+      if(r.status===429){const w=Math.min(5000*(a+1),15000);console.warn(`[WOM] 429 on ${path}, waiting ${w/1000}s`);setStatus(`Rate limited — retrying in ${w/1000}s...`);await delay(w);continue}
+      if(!r.ok)throw new Error(`HTTP ${r.status}`);
+      const j=await r.json();
+      console.log(`[WOM] ✓ ${path} → ${Array.isArray(j)?j.length+" items":"object"}`);
+      return j;
+    }catch(e){console.error(`[WOM] ${path}:`,e.message);if(a<retries-1)await delay(2000*(a+1))}
+  }
+  return null;
+}
+async function cachedWom(k,p){if(cache[k])return cache[k];const d=await wom(p);if(d)cache[k]=d;return d}
+function setStatus(m){const e=document.getElementById("load-status");if(e)e.textContent=m}
+
+function fmt(n){if(n==null||n===-1)return"—";if(typeof n!=="number")return String(n);if(Math.abs(n)>=1e6)return(n/1e6).toFixed(1)+"M";if(Math.abs(n)>=1e3)return(n/1e3).toFixed(1)+"K";return n.toLocaleString()}
+function fmtG(n){return(!n||n<=0)?"—":"+"+fmt(n)}
+function tAgo(d){if(!d)return"—";const m=Math.floor((Date.now()-new Date(d).getTime())/6e4);if(m<60)return m+"m ago";const h=Math.floor(m/60);if(h<24)return h+"h ago";const dy=Math.floor(h/24);return dy<30?dy+"d ago":Math.floor(dy/30)+"mo ago"}
+function ml(m){return m?m.replace(/_/g," ").replace(/\b\w/g,c=>c.toUpperCase()):""}
+function esc(s){const d=document.createElement("div");d.textContent=s;return d.innerHTML}
+function rkC(i){return i===0?"var(--gold)":i===1?"var(--silver)":i===2?"var(--bronze)":"var(--text-faint)"}
+function getLive(){const n=Date.now();return S.comps.filter(c=>n>=new Date(c.startsAt).getTime()&&n<new Date(c.endsAt).getTime())}
+
+function metricOpts(){let h='<optgroup label="Skills">';SKILLS.forEach(s=>h+=`<option value="${s}">${ml(s)}</option>`);h+='</optgroup><optgroup label="Bosses">';BOSSES.forEach(b=>h+=`<option value="${b}">${ml(b)}</option>`);return h+'</optgroup>'}
+function periodOpts(){return["day","week","month","year"].map(p=>`<option value="${p}">${p[0].toUpperCase()+p.slice(1)}</option>`).join("")}
+
+function buildNav(){
+  const tabs=[["home","Home"],["members","Members"],["hiscores","Hiscores"],["gains","Gains"],["competitions","Competitions"],["records","Records"],["achievements","Achievements"]];
+  document.getElementById("nav").innerHTML=tabs.map(([k,l])=>`<button data-tab="${k}" class="${S.tab===k?"active":""}">${l}</button>`).join("");
+  document.querySelectorAll(".nav button").forEach(b=>b.addEventListener("click",()=>{S.tab=b.dataset.tab;buildNav();renderTab()}));
+}
+
+function renderTab(){
+  const el=document.getElementById("content");
+  el.style.animation="none";el.offsetHeight;el.style.animation="fadeIn .35s ease";
+  ({home:renderHome,members:renderMembers,hiscores:renderHiscores,gains:renderGains,competitions:renderComps,records:renderRecords,achievements:renderAchv})[S.tab](el);
+}
+
+// ── Shared Components ──
+
+function mRowHTML(m){
+  const p=m.player||{},r=m.role||"member",c=RC[r]||"#888";
+  return`<div class="row" style="grid-template-columns:1fr 100px 90px 80px 90px" data-player="${esc(p.username||p.displayName||"")}">
+    <div class="player-name"><span class="role-dot" style="background:${c}"></span><span style="color:var(--warm2);font-weight:500">${esc(p.displayName||p.username||"?")}</span></div>
+    <span style="color:${c};font-size:12px;font-family:var(--heading);text-transform:capitalize;letter-spacing:.3px">${r.replace(/_/g," ")}</span>
+    <span class="tabnum" style="color:var(--text);font-size:13px;text-align:right">${fmt(p.exp)}</span>
+    <span class="tabnum" style="color:var(--green);font-size:13px;text-align:right">${p.ehp?p.ehp.toFixed(1):"—"}</span>
+    <span style="color:var(--text-faint);font-size:12px;text-align:right">${tAgo(p.updatedAt)}</span>
+  </div>`;
+}
+
+function cCardHTML(c){
+  const n=Date.now(),lv=n>=new Date(c.startsAt).getTime()&&n<new Date(c.endsAt).getTime(),pa=n>=new Date(c.endsAt).getTime();
+  const st=lv?"LIVE":pa?"ENDED":"UPCOMING",sc=lv?"var(--green)":pa?"var(--text-faint)":"var(--gold)";
+  return`<div class="comp-card ${lv?"live":""}" data-comp="${c.id}">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+      <span class="comp-title" style="flex:1">${esc(c.title)}</span>
+      <span class="comp-status" style="color:${sc};background:${sc}10;border:1px solid ${sc}25;margin-left:12px;${lv?"":""}"><span>${st}</span></span>
+    </div>
+    <div style="font-size:13px;color:var(--text-dim)">${ml(c.metric)} · ${c.participantCount||"—"} participants</div>
+    <div style="font-size:12px;color:var(--text-faint);margin-top:6px">${new Date(c.startsAt).toLocaleDateString()} → ${new Date(c.endsAt).toLocaleDateString()}</div>
+  </div>`;
+}
+
+function lbRows(list,getV,getE){
+  return list.slice(0,50).map((h,i)=>`<div class="row ${i<3?"top3":""}" style="grid-template-columns:44px 1fr 120px 110px" data-player="${esc(h.player?.username||h.player?.displayName||"")}">
+    <span class="rank-num" style="color:${rkC(i)}">${i+1}</span>
+    <span style="color:var(--warm2);font-weight:500">${esc(h.player?.displayName||"?")}</span>
+    <span class="tabnum gain" style="text-align:right">${getV(h)}</span>
+    <span class="tabnum" style="color:var(--text-dim);text-align:right">${getE(h)}</span>
+  </div>`).join("");
+}
+
+function colH(cols){return`<div class="col-head" style="grid-template-columns:${cols.map(c=>c[1]).join(" ")}">${cols.map(([l,,a])=>`<span style="text-align:${a||"left"}">${l}</span>`).join("")}</div>`}
+function bindPlayers(r){r.querySelectorAll("[data-player]").forEach(e=>e.addEventListener("click",()=>{if(e.dataset.player)openPlayer(e.dataset.player)}))}
+function bindComps(){document.querySelectorAll("[data-comp]").forEach(e=>e.addEventListener("click",()=>openComp(e.dataset.comp)))}
+
+// ── HOME ──
+function renderHome(el){
+  const g=S.group||{},live=getLive();
+  let h=`<div class="hero home-section">
+    <div class="card-warm" style="padding:36px 28px">
+      <p class="hero-desc">${esc(g.description||"")||"Welcome to <strong>SanguineOath</strong> — an OSRS clan built on camaraderie, growth, and good vibes. Whether you're a seasoned veteran or just starting your adventure, there's a place for you here."}</p>
+      <div class="stat-grid">
+        <div class="stat-box"><div class="stat-label">Members</div><div class="stat-value">${g.memberCount||S.members.length}</div></div>
+        <div class="stat-box"><div class="stat-label">Clan Chat</div><div class="stat-value">${esc(g.clanChat||"SanguineOath")}</div></div>
+        <div class="stat-box"><div class="stat-label">Home World</div><div class="stat-value">${g.homeworld||"—"}</div></div>
+        <div class="stat-box"><div class="stat-label">Competitions</div><div class="stat-value">${S.comps.length}</div></div>
+      </div>
+    </div>
+  </div>`;
+
+  if(live.length){
+    h+=`<div class="home-section"><div class="sub-title">Active Competitions</div><div style="display:grid;gap:12px">${live.map(cCardHTML).join("")}</div></div>`;
+  }
+
+  if(S.achv.length){
+    h+=`<div class="home-section"><div class="sub-title">Recent Achievements</div><div class="card">`;
+    S.achv.slice(0,8).forEach(a=>{
+      h+=`<div class="row" style="display:flex;justify-content:space-between" data-player="${esc(a.player?.username||a.player?.displayName||"")}">
+        <div><span style="color:var(--warm2);font-weight:500">${esc(a.player?.displayName||"?")}</span><span style="color:var(--text-dim);margin-left:12px;font-size:13px">${esc(a.name)}</span></div>
+        <span style="color:var(--text-faint);font-size:12px">${tAgo(a.createdAt)}</span></div>`;
+    });
+    h+=`</div></div>`;
+  }
+
+  h+=`<div class="home-section center"><div class="sub-title">Find a Member</div>
+    <input type="text" class="search-input" id="home-search" placeholder="Type a username..." style="width:100%;max-width:400px">
+    <div id="home-results" style="max-width:600px;margin:12px auto 0"></div></div>`;
+
+  el.innerHTML=h;bindComps();bindPlayers(el);
+  document.getElementById("home-search").addEventListener("input",function(){
+    const q=this.value.toLowerCase(),res=document.getElementById("home-results");
+    if(!q){res.innerHTML="";return}
+    const fl=S.members.filter(m=>(m.player?.displayName||m.player?.username||"").toLowerCase().includes(q));
+    if(!fl.length){res.innerHTML='<div class="card"><div class="empty">No members found</div></div>';return}
+    res.innerHTML='<div class="card">'+fl.slice(0,8).map(mRowHTML).join("")+'</div>';
+    bindPlayers(res);
+  });
+}
+
+// ── MEMBERS ──
+function renderMembers(el){
+  if(!S.members.length){el.innerHTML=`<div class="section-title">Clan Roster</div><div class="empty">Members are loading — try again in a moment.</div>`;return}
+  const q=S.search.toLowerCase(),fl=S.members.filter(m=>(m.player?.displayName||m.player?.username||"").toLowerCase().includes(q));
+  let h=`<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:24px">
+    <div class="section-title" style="margin:0">Clan Roster <span style="color:var(--text-faint);font-size:16px;font-weight:400">(${S.members.length})</span></div>
+    <input type="text" class="search-input" id="member-search" placeholder="Search..." value="${esc(S.search)}" style="width:220px">
+  </div><div class="card">
+    ${colH([["Player","1fr"],["Rank","100px"],["XP","90px","right"],["EHP","80px","right"],["Updated","90px","right"]])}
+    ${fl.map(mRowHTML).join("")}${fl.length===0?'<div class="empty">No members match your search</div>':""}
+  </div>`;
+  el.innerHTML=h;bindPlayers(el);
+  document.getElementById("member-search").addEventListener("input",function(){S.search=this.value;renderMembers(el);document.getElementById("member-search").focus()});
+}
+
+// ── HISCORES ──
+async function renderHiscores(el){
+  el.innerHTML=`<div class="section-title">Clan Hiscores</div><div class="center" style="margin-bottom:24px"><select id="hs-m">${metricOpts()}</select></div><div id="hs-d"><div class="spinner"></div></div>`;
+  const load=async()=>{const m=document.getElementById("hs-m").value;document.getElementById("hs-d").innerHTML='<div class="spinner"></div>';const d=await cachedWom(`hs_${m}`,`/groups/${GID}/hiscores?metric=${m}`);if(!d||!d.length){document.getElementById("hs-d").innerHTML='<div class="empty">No data for this metric</div>';return}document.getElementById("hs-d").innerHTML=`<div class="card">${colH([["#","44px"],["Player","1fr"],["Level / KC","120px","right"],["Experience","110px","right"]])}${lbRows(d,h=>fmt(h.data?.level||h.data?.kills||h.data?.score),h=>fmt(h.data?.experience))}</div>`;bindPlayers(document.getElementById("hs-d"))};
+  document.getElementById("hs-m").addEventListener("change",load);load();
+}
+
+// ── GAINS ──
+async function renderGains(el){
+  el.innerHTML=`<div class="section-title">XP Gains</div><div class="center" style="margin-bottom:24px;display:flex;justify-content:center;gap:10px"><select id="gn-m">${metricOpts()}</select><select id="gn-p">${periodOpts()}</select></div><div id="gn-d"><div class="spinner"></div></div>`;
+  document.getElementById("gn-p").value="week";
+  const load=async()=>{const m=document.getElementById("gn-m").value,p=document.getElementById("gn-p").value;document.getElementById("gn-d").innerHTML='<div class="spinner"></div>';const d=await cachedWom(`gn_${m}_${p}`,`/groups/${GID}/gained?metric=${m}&period=${p}`);if(!d||!d.length){document.getElementById("gn-d").innerHTML='<div class="empty">No gain data for this period</div>';return}document.getElementById("gn-d").innerHTML=`<div class="card">${colH([["#","44px"],["Player","1fr"],["Gained","120px","right"],["End Value","110px","right"]])}${lbRows(d,g=>fmtG(g.data?.gained||g.data?.experience?.gained||g.data?.kills?.gained||g.data?.score?.gained||0),g=>fmt(g.data?.end||g.data?.experience?.end||g.data?.kills?.end||g.data?.score?.end))}</div>`;bindPlayers(document.getElementById("gn-d"))};
+  document.getElementById("gn-m").addEventListener("change",load);document.getElementById("gn-p").addEventListener("change",load);load();
+}
+
+// ── COMPETITIONS ──
+function renderComps(el){
+  const live=getLive();let h='<div class="section-title">Competitions</div>';
+  if(live.length)h+=`<p class="center" style="color:var(--green);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px"><span class="live-dot" style="display:inline-block;margin-right:6px"></span> Live Now</p><div style="display:grid;gap:12px;margin-bottom:28px">${live.map(cCardHTML).join("")}</div>`;
+  const rest=S.comps.filter(c=>!live.includes(c));
+  if(rest.length)h+=`<div style="display:grid;gap:12px">${rest.map(cCardHTML).join("")}</div>`;
+  if(!S.comps.length)h+='<div class="empty">No competitions found</div>';
+  el.innerHTML=h;bindComps();
+}
+
+// ── RECORDS ──
+async function renderRecords(el){
+  el.innerHTML=`<div class="section-title">Clan Records</div><div class="center" style="margin-bottom:24px;display:flex;justify-content:center;gap:10px"><select id="rc-m">${metricOpts()}</select><select id="rc-p">${periodOpts()}</select></div><div id="rc-d"><div class="spinner"></div></div>`;
+  document.getElementById("rc-p").value="week";
+  const load=async()=>{const m=document.getElementById("rc-m").value,p=document.getElementById("rc-p").value;document.getElementById("rc-d").innerHTML='<div class="spinner"></div>';const d=await cachedWom(`rc_${m}_${p}`,`/groups/${GID}/records?metric=${m}&period=${p}`);if(!d||!d.length){document.getElementById("rc-d").innerHTML='<div class="empty">No records for this metric/period</div>';return}document.getElementById("rc-d").innerHTML=`<div class="card">${colH([["#","44px"],["Player","1fr"],["Record","120px","right"],["Date","110px","right"]])}${lbRows(d,r=>fmtG(r.value),r=>r.updatedAt?new Date(r.updatedAt).toLocaleDateString():"—")}</div>`;bindPlayers(document.getElementById("rc-d"))};
+  document.getElementById("rc-m").addEventListener("change",load);document.getElementById("rc-p").addEventListener("change",load);load();
+}
+
+// ── ACHIEVEMENTS ──
+function renderAchv(el){
+  let h='<div class="section-title">Recent Achievements</div><div class="card">';
+  if(!S.achv.length)h+='<div class="empty">No recent achievements</div>';
+  else S.achv.forEach(a=>{h+=`<div class="row" style="display:flex;justify-content:space-between" data-player="${esc(a.player?.username||a.player?.displayName||"")}"><div><span style="color:var(--warm2);font-weight:500">${esc(a.player?.displayName||"?")}</span><span style="color:var(--text-dim);margin-left:14px;font-size:13px">${esc(a.name)}</span>${a.metric?`<span style="margin-left:10px;font-size:11px;color:var(--text-faint);background:rgba(196,90,74,.06);padding:2px 8px;border-radius:5px">${ml(a.metric)}</span>`:""}</div><span style="color:var(--text-faint);font-size:12px;white-space:nowrap">${tAgo(a.createdAt)}</span></div>`});
+  el.innerHTML=h+'</div>';bindPlayers(el);
+}
+
+// ── Player Modal ──
+async function openPlayer(u){
+  if(!u)return;const root=document.getElementById("modal-root");
+  root.className="modal-bg";root.innerHTML='<div class="modal"><div class="spinner"></div></div>';
+  root.onclick=e=>{if(e.target===root)closeModal()};
+  const d=await wom(`/players/${encodeURIComponent(u)}`);
+  if(!d){root.querySelector(".modal").innerHTML=`<p style="color:var(--text-dim);text-align:center;padding:20px">Couldn't load player data — the API may be busy. Try again in a moment.</p><div class="center"><button class="modal-close" onclick="closeModal()">Close</button></div>`;return}
+  const sn=d.latestSnapshot?.data;
+  let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:28px">
+    <h2 style="font-family:var(--heading);color:var(--warm);font-size:24px;font-weight:700;letter-spacing:1px">${esc(d.displayName||u)}</h2>
+    <button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px">
+    ${[["Type",d.type?.replace(/_/g," ")],["Total XP",fmt(d.exp)],["EHP",d.ehp?.toFixed(1)],["EHB",d.ehb?.toFixed(1)]].map(([l,v])=>`<div class="stat-box"><div class="stat-label">${l}</div><div style="color:var(--warm2);font-size:16px;font-weight:600">${v||"—"}</div></div>`).join("")}</div>`;
+  if(sn?.skills){h+=`<h3 style="font-family:var(--heading);color:var(--accent-soft);font-size:15px;font-weight:600;margin-bottom:12px">Skills</h3><div class="skill-grid">`;SKILLS.filter(s=>s!=="overall").forEach(sk=>{const x=sn.skills[sk];if(x)h+=`<div class="skill-row"><span>${sk}</span><span>${x.level||"—"}</span></div>`});h+='</div>'}
+  root.querySelector(".modal").innerHTML=h;
+}
+
+// ── Comp Modal ──
+async function openComp(id){
+  const root=document.getElementById("modal-root");root.className="modal-bg";root.innerHTML='<div class="modal"><div class="spinner"></div></div>';
+  root.onclick=e=>{if(e.target===root)closeModal()};
+  const d=await wom(`/competitions/${id}`);
+  if(!d){root.querySelector(".modal").innerHTML='<p style="color:var(--text-dim);text-align:center">Couldn\'t load — API may be busy.</p>';return}
+  let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px"><div><h2 style="font-family:var(--heading);color:var(--warm);font-size:20px;font-weight:700">${esc(d.title)}</h2><span style="font-size:13px;color:var(--text-dim)">⚔ ${ml(d.metric)}</span></div><button class="modal-close" onclick="closeModal()">✕</button></div>`;
+  (d.participations||[]).sort((a,b)=>(b.progress?.gained||0)-(a.progress?.gained||0)).slice(0,30).forEach((p,i)=>{h+=`<div style="display:grid;grid-template-columns:36px 1fr 100px;align-items:center;padding:11px 14px;${i<3?"background:rgba(196,90,74,.04);border-radius:8px;":""}border-bottom:1px solid rgba(255,255,255,.02)"><span class="rank-num" style="color:${rkC(i)}">${i+1}</span><span style="color:var(--warm2);font-size:14px">${esc(p.player?.displayName||"?")}</span><span class="gain" style="font-size:14px;text-align:right">${fmtG(p.progress?.gained)}</span></div>`});
+  root.querySelector(".modal").innerHTML=h;
+}
+
+function closeModal(){document.getElementById("modal-root").className="hidden"}
+
+// ── INIT ──
+async function init(){
+  console.log("[SanguineOath] Loading...");
+  setStatus("Loading clan details...");
+  const g=await wom(`/groups/${GID}`);
+  if(g){S.group=g;if(g.memberships&&Array.isArray(g.memberships)){S.members=g.memberships.sort((a,b)=>(RO[a.role]??99)-(RO[b.role]??99))}}
+  await delay(1500);
+  if(!S.members.length){
+    setStatus("Loading members...");
+    const m=await wom(`/groups/${GID}/members?limit=500`);
+    if(m&&Array.isArray(m)){S.members=m.sort((a,b)=>(RO[a.role]??99)-(RO[b.role]??99))}
+    else if(m&&typeof m==="object"){const arrs=Object.values(m).filter(v=>Array.isArray(v));if(arrs.length){S.members=arrs.reduce((a,b)=>a.length>b.length?a:b).sort((a,b)=>(RO[a.role]??99)-(RO[b.role]??99))}}
+  }
+  await delay(1500);
+  setStatus("Loading competitions...");const co=await wom(`/groups/${GID}/competitions?limit=50`);if(co&&Array.isArray(co))S.comps=co;
+  await delay(1500);
+  setStatus("Loading achievements...");const a=await wom(`/groups/${GID}/achievements?limit=25`);if(a&&Array.isArray(a))S.achv=a;
+
+  if(!S.group&&!S.members.length){
+    document.getElementById("content").innerHTML=`<div class="center" style="padding:48px 20px">
+      <p style="color:var(--accent);font-size:15px;margin-bottom:8px">Couldn't reach the Wise Old Man API</p>
+      <p style="color:var(--text-faint);font-size:13px;margin-bottom:24px">This usually means too many requests were made. Wait about 60 seconds and try again.</p>
+      <button onclick="location.reload()" style="background:rgba(196,90,74,.1);border:1px solid rgba(196,90,74,.25);color:var(--warm2);padding:12px 32px;border-radius:10px;cursor:pointer;font-family:var(--font);font-size:14px;font-weight:500;transition:all .2s">Retry</button>
+    </div>`;return;
+  }
+
+  document.getElementById("clan-sub").textContent=`${S.group?.memberCount||S.members.length} Members`;
+  const live=getLive();
+  if(live.length){const b=document.getElementById("live-badge");b.className="live-badge";b.innerHTML=`<span class="live-dot"></span> ${live.length} Live Competition${live.length>1?"s":""}`}
+  buildNav();renderTab();
+}
+init();
+</script>
+</body>
+</html>
